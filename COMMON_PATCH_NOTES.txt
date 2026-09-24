@@ -1,5 +1,5 @@
 ゲーム名：どっちーな ONLINE
-バージョン：v0.3.2
+バージョン：v0.3.3
 
 [GAME]
 - ベース進行：質問ピラミッド型
@@ -64,6 +64,12 @@ src/index.js
 想定Worker：
 https://docchina-online.naitoryo7110.workers.dev
 
+
+[FIX v0.3.3]
+・スマホ最終結果で縦スクロールできない問題を修正
+・プレイ中は従来どおりbodyスクロールなし
+・ゲームパネルを画面高に固定し、result-areaのみ縦スクロール
+・iOS向け慣性スクロールと下端Safe Area余白を追加
 
 [NEW v0.3.2]
 - 新規7カテゴリを追加

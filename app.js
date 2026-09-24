@@ -7,7 +7,7 @@ const MAX_PLAYERS = 10;
 const WORKER_ORIGIN = 'https://docchina-online.naitoryo7110.workers.dev';
 const COMMON_PLAYER_NAME_KEY = 'boardgamePlayerName';
 const ROOM_IDS = ['room1', 'room2', 'room3', 'room4'];
-const APP_VERSION = 'v0.3.2';
+const APP_VERSION = 'v0.3.3';
 
 const NAME_DRAFT_KEY = `${GAME_ID}-name-draft`;
 const ACTIVE_ROOM_KEY = `${GAME_ID}-online-room`;
