@@ -7,7 +7,7 @@ const MAX_PLAYERS = 10;
 const WORKER_ORIGIN = 'https://docchina-online.naitoryo7110.workers.dev';
 const COMMON_PLAYER_NAME_KEY = 'boardgamePlayerName';
 const ROOM_IDS = ['room1', 'room2', 'room3', 'room4'];
-const APP_VERSION = 'v0.3.0';
+const APP_VERSION = 'v0.3.2';
 
 const NAME_DRAFT_KEY = `${GAME_ID}-name-draft`;
 const ACTIVE_ROOM_KEY = `${GAME_ID}-online-room`;
@@ -44,6 +44,8 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const els = {
   titleView: $('#titleView'),
   roomView: $('#roomView'),
+  roomLayout: $('.room-layout'),
+  sidePanel: $('.side-panel'),
   playerName: $('#playerName'),
   roomGrid: $('#roomGrid'),
   titleMessage: $('#titleMessage'),
@@ -446,6 +448,9 @@ function renderRoomState() {
   updateTopButtons();
 
   const isLobby = roomState.status === 'lobby';
+  els.roomLayout.classList.toggle('lobby-mode', isLobby);
+  els.roomLayout.classList.toggle('play-mode', !isLobby);
+  els.sidePanel.classList.toggle('hidden', !isLobby);
   els.lobbyArea.classList.toggle('hidden', !isLobby);
   els.gameArea.classList.toggle('hidden', isLobby || roomState.status === 'finished');
   els.resultArea.classList.toggle('hidden', roomState.status !== 'finished');
@@ -762,11 +767,42 @@ function renderFinalResult() {
     lastScore = p.score;
     return `<div class="rank-row"><div class="rank-no">${rank}位</div><div>${escapeHtml(p.name)}</div><div class="rank-score">${Number(p.score)||0}点</div></div>`;
   }).join('');
+
+  const history = Array.isArray(roomState.game && roomState.game.roundHistory)
+    ? roomState.game.roundHistory
+    : [];
+  const historyByPlayer = new Map(history.map(entry => [entry.respondentId, entry]));
+  const answerHistory = (roomState.players || []).map(p => {
+    const entry = historyByPlayer.get(p.id);
+    const answers = entry && Array.isArray(entry.answers) ? entry.answers : [];
+    const answerRows = answers.length ? answers.map((item,index) => `
+      <div class="answer-history-row">
+        <div class="answer-history-no">${index+1}</div>
+        <div class="answer-history-badge ${item.answer ? 'yes' : 'no'}">${item.answer ? 'YES' : 'NO'}</div>
+        <div class="answer-history-question">${escapeHtml(item.question || '---')}</div>
+      </div>
+    `).join('') : `<div class="small-muted answer-history-empty">回答履歴がありません</div>`;
+    const endpoint = entry && Number.isInteger(Number(entry.arrivedEndpoint))
+      ? (LEAF_LABELS[Number(entry.arrivedEndpoint)] || '---')
+      : '---';
+    return `
+      <section class="player-answer-history">
+        <div class="player-answer-history-head">
+          <h3>${escapeHtml(p.name)}</h3>
+          <span>到達地点 ${endpoint}</span>
+        </div>
+        <div class="answer-history-list">${answerRows}</div>
+      </section>
+    `;
+  }).join('');
+
   const isHost = roomState.hostId === selfId;
   els.resultArea.innerHTML = `
-    <div class="result-card">
+    <div class="result-card final-result-card">
       <h2>最終結果</h2>
       <div class="final-ranking">${rows}</div>
+      <h2 class="history-title">YES / NO 回答履歴</h2>
+      <div class="all-answer-history">${answerHistory}</div>
       <div class="result-actions">
         ${isHost ? `<button id="backLobbyBtn" class="primary-btn">ロビーへ戻る</button>` : `<span class="small-muted">ホストがロビーへ戻します</span>`}
       </div>

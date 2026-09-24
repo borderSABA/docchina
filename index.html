@@ -16,7 +16,7 @@
         <button id="questionBtn" class="ghost-btn hidden">質問管理</button>
         <button id="pinBtn" class="ghost-btn hidden">ピン</button>
         <button id="leaveBtn" class="danger-btn hidden">退出</button>
-        <span class="version">v0.3.0</span>
+        <span class="version">v0.3.2</span>
       </div>
     </header>
 
@@ -45,29 +45,41 @@
             </div>
 
             <div id="playerList" class="player-list"></div>
-
-            <div id="lobbySettings" class="settings-card">
-              <div class="section-title">使用カテゴリ</div>
-              <div id="categorySettings" class="category-list"></div>
-              <div id="activeQuestionCount" class="small-muted"></div>
-              <div class="section-title mode-title">ゲームモード</div>
-              <div id="modeSettings" class="mode-settings"></div>
-              <button id="startBtn" class="primary-btn wide hidden">ゲーム開始</button>
-            </div>
           </aside>
 
           <section class="game-panel">
             <div id="lobbyArea" class="lobby-area">
               <div class="lobby-main-card">
-                <h2>待機中</h2>
-                <p>2～10人で遊べます。</p>
-                <p>ホストがカテゴリを選び、全員揃ったらゲームを開始します。</p>
-                <div class="rule-mini">
-                  <div><b>1.</b> 回答者が15問の5段ピラミッドを確認。答えたくない質問はチェンジ</div>
-                  <div><b>2.</b> 回答者以外が最終地点A～Fを秘密予想</div>
-                  <div><b>3.</b> 回答者がYES / NOで5問回答してピラミッドを進む</div>
-                  <div><b>4.</b> 到達地点を当てた人だけ1点。全員が1回ずつ回答者で終了</div>
+                <div class="lobby-intro">
+                  <h2>待機中</h2>
+                  <p>2～10人で遊べます。全員揃ったらホストが開始します。</p>
                 </div>
+
+                <div id="lobbySettings" class="settings-card lobby-settings-card">
+                  <div class="settings-heading-row">
+                    <div>
+                      <div class="section-title">使用カテゴリ</div>
+                      <div class="small-muted">遊びたいカテゴリをONにしてください</div>
+                    </div>
+                    <div id="activeQuestionCount" class="question-total"></div>
+                  </div>
+                  <div id="categorySettings" class="category-list"></div>
+                  <div class="mode-block">
+                    <div class="section-title mode-title">ゲームモード</div>
+                    <div id="modeSettings" class="mode-settings"></div>
+                  </div>
+                  <button id="startBtn" class="primary-btn wide start-game-btn hidden">ゲーム開始</button>
+                </div>
+
+                <details class="rule-details">
+                  <summary>遊び方を確認</summary>
+                  <div class="rule-mini">
+                    <div><b>1.</b> 回答者が15問の5段ピラミッドを確認。答えたくない質問はチェンジ</div>
+                    <div><b>2.</b> 回答者以外が最終地点A～Fを秘密予想</div>
+                    <div><b>3.</b> 回答者がYES / NOで5問回答してピラミッドを進む</div>
+                    <div><b>4.</b> 到達地点を当てた人だけ1点。全員が1回ずつ回答者で終了</div>
+                  </div>
+                </details>
               </div>
             </div>
 
