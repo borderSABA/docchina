@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171923">
+  <title>どっちーな ONLINE</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">どっちーな ONLINE</div>
+      <div class="top-actions">
+        <button id="rulesBtn" class="ghost-btn">遊び方</button>
+        <button id="questionBtn" class="ghost-btn hidden">質問管理</button>
+        <button id="pinBtn" class="ghost-btn hidden">ピン</button>
+        <button id="leaveBtn" class="danger-btn hidden">退出</button>
+        <span class="version">v0.3.0</span>
+      </div>
+    </header>
+
+    <main id="screen">
+      <section id="titleView" class="view active">
+        <div class="title-panel">
+          <h1>どっちーな</h1>
+          <p class="subtitle">この人なら、最後はどこへ行く？</p>
+
+          <label class="name-label" for="playerName">プレイヤー名</label>
+          <input id="playerName" class="name-input" maxlength="32" autocomplete="nickname" placeholder="名前を入力">
+
+          <div id="roomGrid" class="room-grid"></div>
+          <div id="titleMessage" class="message"></div>
+        </div>
+      </section>
+
+      <section id="roomView" class="view">
+        <div class="room-layout">
+          <aside class="side-panel">
+            <div class="panel-head">
+              <div>
+                <div id="roomTitle" class="panel-title">ROOM 1</div>
+                <div id="roomStatus" class="small-muted">待機中</div>
+              </div>
+            </div>
+
+            <div id="playerList" class="player-list"></div>
+
+            <div id="lobbySettings" class="settings-card">
+              <div class="section-title">使用カテゴリ</div>
+              <div id="categorySettings" class="category-list"></div>
+              <div id="activeQuestionCount" class="small-muted"></div>
+              <div class="section-title mode-title">ゲームモード</div>
+              <div id="modeSettings" class="mode-settings"></div>
+              <button id="startBtn" class="primary-btn wide hidden">ゲーム開始</button>
+            </div>
+          </aside>
+
+          <section class="game-panel">
+            <div id="lobbyArea" class="lobby-area">
+              <div class="lobby-main-card">
+                <h2>待機中</h2>
+                <p>2～10人で遊べます。</p>
+                <p>ホストがカテゴリを選び、全員揃ったらゲームを開始します。</p>
+                <div class="rule-mini">
+                  <div><b>1.</b> 回答者が15問の5段ピラミッドを確認。答えたくない質問はチェンジ</div>
+                  <div><b>2.</b> 回答者以外が最終地点A～Fを秘密予想</div>
+                  <div><b>3.</b> 回答者がYES / NOで5問回答してピラミッドを進む</div>
+                  <div><b>4.</b> 到達地点を当てた人だけ1点。全員が1回ずつ回答者で終了</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="gameArea" class="game-area hidden">
+              <div class="round-head">
+                <div>
+                  <div id="roundLabel" class="round-label">ROUND 1 / 4</div>
+                  <div id="respondentLabel" class="respondent-label"></div>
+                </div>
+                <div id="phaseLabel" class="phase-pill"></div>
+              </div>
+
+              <div id="pyramidWrap" class="pyramid-wrap">
+                <div id="pyramid" class="pyramid"></div>
+              </div>
+
+              <div id="actionArea" class="action-area"></div>
+            </div>
+
+            <div id="resultArea" class="result-area hidden"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <div id="rulesModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card compact">
+        <div class="modal-head">
+          <h2>遊び方</h2>
+          <button class="icon-btn" data-close-modal="rulesModal">×</button>
+        </div>
+        <div class="rules-body">
+          <p>毎ラウンド1人が回答者になります。</p>
+          <p>質問ピラミッドは5段、合計15問です。ラウンド開始時に回答者だけが質問を確認し、答えたくない質問はチェンジできます。</p>
+          <p>確認後、回答者以外は最終地点A～Fのどこへ着くかを秘密で予想します。全員が予想すると、回答者が現在の質問にYES / NOで回答します。YESなら左、NOなら右へ進み、5回答後に到達地点が決まります。</p>
+          <p>「質問を隠すモード」では、予想する側にはピラミッド全体を表示し、回答者には進行中の質問だけを表示します。質問確認中は回答者だけが内容を見られます。</p>
+          <p>到達地点を当てた人は1点。回答者はそのラウンドでは得点しません。</p>
+          <p>全員が1回ずつ回答者になったらゲーム終了です。</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="questionModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card question-modal-card">
+        <div class="modal-head">
+          <div>
+            <h2>質問管理</h2>
+            <div id="questionSummary" class="small-muted"></div>
+          </div>
+          <button class="icon-btn" data-close-modal="questionModal">×</button>
+        </div>
+
+        <div class="question-toolbar">
+          <select id="questionCategoryFilter"></select>
+          <input id="questionSearch" type="search" placeholder="質問を検索">
+          <button id="addQuestionBtn" class="primary-btn">＋ 新規追加</button>
+          <button id="exportQuestionsBtn" class="ghost-btn">書き出し</button>
+          <label class="ghost-btn file-label">読み込み<input id="importQuestionsInput" type="file" accept="application/json,.json"></label>
+          <button id="resetQuestionsBtn" class="danger-outline-btn">初期1800問に戻す</button>
+        </div>
+
+        <div id="questionList" class="question-list"></div>
+      </div>
+    </div>
+
+    <div id="editQuestionModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card compact">
+        <div class="modal-head">
+          <h2 id="editQuestionTitle">質問を編集</h2>
+          <button class="icon-btn" data-close-modal="editQuestionModal">×</button>
+        </div>
+        <label class="field-label">カテゴリ
+          <select id="editQuestionCategory"></select>
+        </label>
+        <label class="field-label">質問文
+          <textarea id="editQuestionText" rows="4" maxlength="160"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button id="saveQuestionBtn" class="primary-btn">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./questions.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
